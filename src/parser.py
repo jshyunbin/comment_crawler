@@ -5,32 +5,57 @@ from selenium import webdriver
 from comment import Comment
 
 
-def parser(url, max_collect, collect_empty):
+def parser(flag):
+    URL = flag.url
+    MAX_COLLECT = flag.max_collect
+    COLLECT_EMPTY = flag.collect_empty
+    BROWSER = flag.browser
+
     market = None
-    if 'gmarket' in url:
-        print('gmarket')
+    soup = None
+
+    if 'gmarket' in URL:
+        print('using gmarket parser...')
         market = 'gmarket'
-    elif '11st' in url:
+
+        if BROWSER == 'Safari':
+            browser = webdriver.Safari()
+        else:
+            browser = webdriver.Firefox()
+
+        try:
+            browser.get(URL)
+            browser.find_element(value='txtReviewTotalCount').click()
+            time.sleep(0.5)
+
+            soup = bs(browser.page_source, 'html.parser')
+        except Exception as e:
+            print(e)
+
+    elif '11st' in URL:
         print('11st')
         market = '11st'
-    elif 'shopping.naver' in url:
+    elif 'shopping.naver' in URL:
         print('naver shopping')
+
         market = 'naver'
-    elif 'coupang' in url:
+    elif 'coupang' in URL:
         print('coupang')
+
+        page = requests.get(URL)
+        soup = bs(page.text, "html.parser")
+
         market = 'coupang'
 
     if market is None:
         print('Cannot parse this url web site.')
         return
 
-    page = requests.get(url)
-    soup = bs(page.text, "html.parser")
 
     if market == 'coupang':
         coupang_parse(soup)
     elif market == 'gmarket':
-        gmarket_parse(url)
+        gmarket_parse(soup)
 
 
 def coupang_parse(soup):
@@ -40,20 +65,9 @@ def coupang_parse(soup):
         print(e)
 
 
-def gmarket_parse(url):
-    browser = webdriver.Safari()
-    soup = None
+def gmarket_parse(soup):
     prem_comments = []
     norm_comments = []
-
-    try:
-        browser.get(url)
-        browser.find_element(value='txtReviewTotalCount').click()
-        time.sleep(0.5)
-
-        soup = bs(browser.page_source, 'html.parser')
-    except Exception as e:
-        print(e)
 
     elements = soup.select('div#premium-wrapper table tr')
 
