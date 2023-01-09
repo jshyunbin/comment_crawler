@@ -3,7 +3,7 @@
 This web crawler targets korean online shopping mall comments. 
 
 ```zsh
-python src/main.py -url "http://item.gmarket.co.kr/Item?goodscode=2405613985&ver=638083484789237196
+python src/main.py -url "http://item.gmarket.co.kr/Item?goodscode=2405613985&ver=638083484789237196"
 ```
 
 ## Supporting Websites
