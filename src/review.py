@@ -1,7 +1,7 @@
 
 
-class Comment:
-    def __init__(self, context, title='', date=None, user=None, star='', rcmd=''):
+class Review:
+    def __init__(self, context, title='', date=None, user='', star='', rcmd=''):
         self.title = title.strip()
         self.context = context.strip()
         self.date = date

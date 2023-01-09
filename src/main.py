@@ -1,6 +1,6 @@
 from absl import app
 from absl import flags
-from parser import parser
+from market import market
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("url", None, "URL link of the online shopping website.")
@@ -15,7 +15,7 @@ flags.mark_flag_as_required("url")
 
 
 def main(argv):
-  parser(FLAGS)
+  market(FLAGS)
 
 
 
