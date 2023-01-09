@@ -47,7 +47,7 @@ def gmarket(merch_id: str, date_from: datetime.date):
                     flag = True
                     break
                 review = Review(k.css_first("p.con").text(strip=True), date=date)
-                print(review)
+                # print(review)
                 ret.append(review)
             if flag:
                 break
