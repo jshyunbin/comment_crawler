@@ -1,11 +1,11 @@
 import datetime
 
-from fetch import Fetch
+from src.web.fetch import Fetch
 from selectolax.parser import HTMLParser
 from review import Review
 
 
-def gmarket(merch_id: str, date_from: datetime.date):
+def gmarket(merch_id: str, date_from: datetime.date, opt):
     res = Fetch.post(
         "http://item.gmarket.co.kr/Review", data={"goodsCode": merch_id}
     )
@@ -46,6 +46,8 @@ def gmarket(merch_id: str, date_from: datetime.date):
                 if date.date() < date_from:
                     flag = True
                     break
+                if not opt['collect_empty'] and k.css_first("p.con").text(strip=True) == '':
+                    continue
                 review = Review(k.css_first("p.con").text(strip=True), date=date)
                 # print(review)
                 ret.append(review)

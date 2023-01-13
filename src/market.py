@@ -1,20 +1,21 @@
 import datetime
-import requests
-from src.gmarket import gmarket
-from review import Review
+from mall import *
 
 
 def market(flag):
     URL = flag.url
-    MAX_COLLECT = flag.max_collect
-    COLLECT_EMPTY = flag.collect_empty
 
-    market = None
+    opt = {
+        'collect_empty': flag.collect_empty,
+        'max_collect': flag.max_collect
+            }
+
+    mall = None
     soup = None
 
     if 'gmarket' in URL:
         print('using gmarket parser...')
-        market = 'gmarket'
+        mall = 'gmarket'
 
         url_data = URL.split('?')[1].split('&')
         merch_id = ""
@@ -27,28 +28,27 @@ def market(flag):
             return
 
         print(merch_id)
-        ret = gmarket(merch_id, date_from=datetime.date(2020, 1, 1))
-        print(ret)
+        ret = gmarket(merch_id, datetime.date(2020, 1, 1), opt)
 
     elif '11st' in URL:
         print('11st')
-        market = '11st'
+        mall = '11st'
     elif 'shopping.naver' in URL:
         print('naver shopping')
 
-        market = 'naver'
+        mall = 'naver'
     elif 'coupang' in URL:
         print('coupang')
 
 
-        market = 'coupang'
+        mall = 'coupang'
 
-    if market is None:
+    if mall is None:
         print('Cannot parse this url web site.')
         return
 
 
-    if market == 'coupang':
+    if mall == 'coupang':
         coupang_parse(soup)
 
 
