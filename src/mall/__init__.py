@@ -1,7 +1,6 @@
 from enum import Enum
 
-
-__all__ = ['review', 'gmarket']
+__all__ = ['review', 'gmarket', 'naver', 'coupang']
 
 
 class Mall(Enum):

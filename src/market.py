@@ -1,5 +1,8 @@
 import datetime
 from mall import *
+from src.web.fetch import Fetch
+from selectolax.parser import HTMLParser
+import json
 
 
 def market(flag):
@@ -28,13 +31,25 @@ def market(flag):
             return
 
         print(merch_id)
-        ret = gmarket(merch_id, datetime.date(2020, 1, 1), opt)
+        ret = gmarket.GMarket.scrap(merch_id, datetime.date(2020, 1, 1), opt)
 
     elif '11st' in URL:
         print('11st')
         mall = '11st'
-    elif 'shopping.naver' in URL:
-        print('naver shopping')
+    elif 'naver' in URL:
+        print('using naver shopping parser...')
+
+        ret = Fetch.get(URL)
+        root = HTMLParser(ret)
+        info = root.css("body > script")[0].text()
+        print(info[:50])
+        info = json.loads(info.split('_=')[1])
+        info = info['product']['A']
+        productNo = info['productNo']
+        merchNo = info['channel']['naverPaySellerNo']
+
+        ret = naver.Naver.scrap(productNo, merchNo, datetime.date(2010, 1, 1))
+        [print(ret[i]) for i in range(5)]
 
         mall = 'naver'
     elif 'coupang' in URL:
@@ -47,10 +62,3 @@ def market(flag):
         print('Cannot parse this url web site.')
         return
 
-
-    if mall == 'coupang':
-        coupang_parse(soup)
-
-
-def coupang_parse(soup):
-    pass
