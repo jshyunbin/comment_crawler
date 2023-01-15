@@ -41,8 +41,9 @@ def market(flag):
 
         ret = Fetch.get(URL)
         root = HTMLParser(ret)
-        info = root.css("body > script")[0].text()
-        print(info[:50])
+        print(ret)
+        info = root.css_first("body > script").text()
+        # print(info[:50])
         info = json.loads(info.split('_=')[1])
         info = info['product']['A']
         productNo = info['productNo']

@@ -1,7 +1,7 @@
 import datetime
 import json
 from src.web.fetch import Fetch
-from src.mall.review import Review
+from src.mall.review import Review, Reviews
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
@@ -14,17 +14,14 @@ class Naver:
     @staticmethod
     def scrap(merch_id: str, merch_no: str, date_from: datetime.date):
         res = Fetch.get(
-            f"https://smartstore.naver.com/i/v1/reviews/paged-reviews?originProductNo={merch_id}&merchantNo={merch_no}&b",
+            f"https://smartstore.naver.com/i/v1/reviews/paged-reviews?page=1&pageSize=20&sortType=REVIEW_CREATE_DATE"
+            f"DESC&originProductNo={merch_id}&merchantNo={merch_no}&b",
             headers=headers
         )
-        print(f"https://smartstore.naver.com/i/v1/reviews/paged-reviews?originProductNo=5993165160&merchantNo=511289869&b")
-        print(res)
         root = json.loads(res)
 
-        review_list = []
+        review_list = Reviews(mall='naver', item=merch_id)
         for review_root in root['contents']:
-            # review.merch_id = merch_id
-            # review.fetch_date = datetime.datetime.now()
             date = review_root['createDate'].split("T")[0].split("-")
             date = [int(d) for d in date]
             date = datetime.date(*date)
@@ -38,4 +35,4 @@ class Naver:
 
 if __name__ == '__main__':
     li = Naver.scrap('5273934685', '500060220', datetime.date(2010, 1, 1))
-    print(li[0])
+    print(len(li))

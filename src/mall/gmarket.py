@@ -2,7 +2,7 @@ import datetime
 
 from src.web.fetch import Fetch
 from selectolax.parser import HTMLParser
-from src.mall.review import Review
+from src.mall.review import Review, Reviews
 
 
 class GMarket:
@@ -20,7 +20,7 @@ class GMarket:
             map(lambda x: int(x.text()), root.css("span.pagetotal > em"))
         )
 
-        ret = []
+        ret = Reviews(mall='gmarket', item=merch_id)
 
         for j in range(2):
             for i in range(review_count[j]):
