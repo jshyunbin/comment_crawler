@@ -15,17 +15,18 @@ class Reviews:
         self.ls.extend(rs.ls)
 
 
-    def write_json(self, filename: str, opt):
-        with open(filename, 'x') as f:
+    def write_json(self, filename: str):
+        print(self.ls[0].__dict__)
+        with open(filename, 'x', encoding='UTF-8') as f:
             f.write(f'{{"scrap_time": "{datetime.now()}", "mall": "{self.mall}", "item": "{self.item}", '
-                    f'"reviews": [{", ".join([json.dumps(r) for r in self.ls])}]}}')
+                    f'"reviews": [{", ".join([json.dumps(r.__dict__, ensure_ascii=False) for r in self.ls])}]}}')
 
     def __len__(self):
         return len(self.ls)
 
 
 class Review:
-    def __init__(self, context, title='', date=None, user='', star='', rcmd=''):
+    def __init__(self, context, date: str, title='', user='', star='', rcmd=''):
         self.title = title.strip()
         self.context = context.strip()
         self.date = date

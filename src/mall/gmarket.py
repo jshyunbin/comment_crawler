@@ -50,7 +50,7 @@ class GMarket:
                         break
                     if not opt['collect_empty'] and k.css_first("p.con").text(strip=True) == '':
                         continue
-                    review = Review(k.css_first("p.con").text(strip=True), date=date)
+                    review = Review(k.css_first("p.con").text(strip=True), date=date.__str__())
                     # print(review)
                     ret.append(review)
                 if flag:

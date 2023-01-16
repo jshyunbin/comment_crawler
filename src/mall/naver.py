@@ -3,20 +3,20 @@ import json
 from src.web.fetch import Fetch
 from src.mall.review import Review, Reviews
 
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
-    "Referer": ".shopping.naver.com",
-}
-
 
 class Naver:
-    @staticmethod
-    def scrap(merch_id: str, merch_no: str, date_from: datetime.date):
+    HEADERS = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                      "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
+        "Referer": ".shopping.naver.com",
+    }
+
+    @classmethod
+    def scrap(cls, merch_id: str, merch_no: str, date_from: datetime.date):
         res = Fetch.get(
             f"https://smartstore.naver.com/i/v1/reviews/paged-reviews?page=1&pageSize=20&sortType=REVIEW_CREATE_DATE"
             f"DESC&originProductNo={merch_id}&merchantNo={merch_no}&b",
-            headers=headers
+            headers=cls.HEADERS
         )
         root = json.loads(res)
 
@@ -28,7 +28,7 @@ class Naver:
             if date < date_from:
                 break
             user = review_root['writerMemberId']
-            review = Review(review_root['reviewContent'], date=date, user=user)
+            review = Review(review_root['reviewContent'], date=date.__str__(), user=user)
             review_list.append(review)
         return review_list
 

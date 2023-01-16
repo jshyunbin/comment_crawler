@@ -3,9 +3,10 @@ from mall import *
 from src.web.fetch import Fetch
 from selectolax.parser import HTMLParser
 import json
+from src.mall.review import Reviews
 
 
-def market(flag):
+def market(flag) -> Reviews:
     URL = flag.url
 
     opt = {
@@ -13,8 +14,6 @@ def market(flag):
         'max_collect': flag.max_collect
             }
 
-    mall = None
-    soup = None
 
     if 'gmarket' in URL:
         print('using gmarket parser...')
@@ -28,10 +27,10 @@ def market(flag):
         
         if merch_id == '':
             print('invalid url')
-            return
+            return Reviews(mall='gmarket', item=merch_id)
 
         print(merch_id)
-        ret = gmarket.GMarket.scrap(merch_id, datetime.date(2020, 1, 1), opt)
+        return gmarket.GMarket.scrap(merch_id, datetime.date(2020, 1, 1), opt)
 
     elif '11st' in URL:
         print('11st')
@@ -39,27 +38,20 @@ def market(flag):
     elif 'naver' in URL:
         print('using naver shopping parser...')
 
-        ret = Fetch.get(URL)
+        ret = Fetch.get(URL, headers=naver.Naver.HEADERS)
         root = HTMLParser(ret)
-        print(ret)
         info = root.css_first("body > script").text()
         # print(info[:50])
+        # print(info.split('_=')[1])
         info = json.loads(info.split('_=')[1])
         info = info['product']['A']
         productNo = info['productNo']
         merchNo = info['channel']['naverPaySellerNo']
 
-        ret = naver.Naver.scrap(productNo, merchNo, datetime.date(2010, 1, 1))
-        [print(ret[i]) for i in range(5)]
+        return naver.Naver.scrap(productNo, merchNo, datetime.date(2010, 1, 1))
 
-        mall = 'naver'
     elif 'coupang' in URL:
         print('coupang')
 
 
-        mall = 'coupang'
-
-    if mall is None:
-        print('Cannot parse this url web site.')
-        return
 
