@@ -12,7 +12,7 @@ def market(flag) -> Reviews:
     opt = {
         'collect_empty': flag.collect_empty,
         'max_collect': flag.max_collect
-            }
+        }
 
 
     if 'gmarket' in URL:
@@ -50,7 +50,7 @@ def market(flag) -> Reviews:
 
         print(f'product number: {productNo}, merchant number: {merchNo}')
 
-        return naver.Naver.scrap(productNo, merchNo, datetime.date(2010, 1, 1))
+        return naver.Naver.scrap(productNo, merchNo, datetime.date(2010, 1, 1), opt)
 
     elif 'coupang' in URL:
         print('coupang')

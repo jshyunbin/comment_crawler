@@ -10,7 +10,7 @@ python src/main.py -url "http://item.gmarket.co.kr/Item?goodscode=2405613985&ver
 
 - [G마켓](http://www.gmarket.co.kr)
 - [11번가](https://www.11st.co.kr) (wip)
-- [Naver shopping](https://shopping.naver.com/home) (wip)
+- [Naver shopping](https://shopping.naver.com/home)
 - [coupang](https://www.coupang.com) (wip)
 
 ## How to use

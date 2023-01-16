@@ -15,7 +15,7 @@ class Naver:
     }
 
     @classmethod
-    def scrap(cls, merch_id: str, merch_no: str, date_from: datetime.date):
+    def scrap(cls, merch_id: str, merch_no: str, date_from: datetime.date, opt):
         link = "https://smartstore.naver.com/i/v1/reviews/paged-reviews"
         pg = 1
 
@@ -32,6 +32,8 @@ class Naver:
                 },
                 headers=cls.HEADERS
             )
+            pg += 1
+
             if selectolax.parser.HTMLParser(res).text() == 'OK':
                 break
             root = json.loads(res)
@@ -45,11 +47,13 @@ class Naver:
                     return review_list
                 user = review_root['writerMemberId']
                 score = review_root['reviewScore']
+                if review_root['reviewContent'] == '' and not opt['collect_empty']:
+                    continue
                 review = Review(review_root['reviewContent'], date=date.__str__(), user=user, star=score)
                 review_list.append(review)
         return review_list
 
 
 if __name__ == '__main__':
-    li = Naver.scrap('5273934685', '500060220', datetime.date(2010, 1, 1))
+    li = Naver.scrap('5273934685', '500060220', datetime.date(2010, 1, 1), {'collect_empty': False})
     print(len(li))
