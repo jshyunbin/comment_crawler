@@ -48,6 +48,8 @@ def market(flag) -> Reviews:
         productNo = info['productNo']
         merchNo = info['channel']['naverPaySellerNo']
 
+        print(f'product number: {productNo}, merchant number: {merchNo}')
+
         return naver.Naver.scrap(productNo, merchNo, datetime.date(2010, 1, 1))
 
     elif 'coupang' in URL:

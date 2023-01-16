@@ -1,5 +1,8 @@
 import datetime
 import json
+
+import selectolax.parser
+
 from src.web.fetch import Fetch
 from src.mall.review import Review, Reviews
 
@@ -13,23 +16,37 @@ class Naver:
 
     @classmethod
     def scrap(cls, merch_id: str, merch_no: str, date_from: datetime.date):
-        res = Fetch.get(
-            f"https://smartstore.naver.com/i/v1/reviews/paged-reviews?page=1&pageSize=20&sortType=REVIEW_CREATE_DATE"
-            f"DESC&originProductNo={merch_id}&merchantNo={merch_no}&b",
-            headers=cls.HEADERS
-        )
-        root = json.loads(res)
+        link = "https://smartstore.naver.com/i/v1/reviews/paged-reviews"
+        pg = 1
 
         review_list = Reviews(mall='naver', item=merch_id)
-        for review_root in root['contents']:
-            date = review_root['createDate'].split("T")[0].split("-")
-            date = [int(d) for d in date]
-            date = datetime.date(*date)
-            if date < date_from:
+        while True:
+            res = Fetch.post(
+                link,
+                data={
+                    'page': pg,
+                    'pageSize': 20,
+                    'sortType': 'REVIEW_CREATE_DATEDESC',
+                    'originProductNo': f'{merch_id}',
+                    'merchantNo': f'{merch_no}'
+                },
+                headers=cls.HEADERS
+            )
+            if selectolax.parser.HTMLParser(res).text() == 'OK':
                 break
-            user = review_root['writerMemberId']
-            review = Review(review_root['reviewContent'], date=date.__str__(), user=user)
-            review_list.append(review)
+            root = json.loads(res)
+
+
+            for review_root in root['contents']:
+                date = review_root['createDate'].split("T")[0].split("-")
+                date = [int(d) for d in date]
+                date = datetime.date(*date)
+                if date < date_from:
+                    return review_list
+                user = review_root['writerMemberId']
+                score = review_root['reviewScore']
+                review = Review(review_root['reviewContent'], date=date.__str__(), user=user, star=score)
+                review_list.append(review)
         return review_list
 
 
